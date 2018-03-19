@@ -8,6 +8,9 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
+app.use('/static/css/', express.static('views/css'));
+app.use('/static/js/', express.static('views/js'));
+
 let listeners = {}; // stores the callbacks for certain ids
 
 const Client = new WebSocket("wss://hack.chat/chat-ws");
