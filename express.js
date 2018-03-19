@@ -31,14 +31,16 @@ Client.on('message', message => {
 			let id = args.text.substring(3);
 			id = id.substring(0, id.indexOf(':'));
 
-			let text = args.text;
+			let responseType = args.text.substring(0, 2);
 
-			if (text.startsWith('RC:')) { // response-compressed
-				text = lzstring.decompressFromUTF16(text.substring(3 + id.length + 1));
+			let text = args.text.substring(3 + id.length + 1) // get everything after RC:<id>:
+
+
+			if (responseType === 'RC') { // if the response is compressed
+				text = lzstring.decompressFromUTF16(text);
 			}
 
 			if (listeners.hasOwnProperty(id) && typeof(listeners[id]) === 'function') {
-				
 				listeners[id](text, id, args);
 			}
 		}
@@ -69,6 +71,9 @@ function request (text, callback) {
 function generateID () {
 	return Math.random().toString().substring(3, 9);
 }
+
+
+
 
 let Data = {
 	express,
