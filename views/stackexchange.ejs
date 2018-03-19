@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title></title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<style>
+			code {
+				outline: 1px solid black;
+				background-color: darkgray;
+				color: white;
+			}
+		</style>
+	</head>
+	<body>
+		<% for (let i = 0; i < answers.length; i++) { %>
+			<div class="answer">
+				<p><a href="<%= answers[i].poster.profileURL %>"><%= answers[i].poster.name %></a> | <%= answers[i].score %> | <%= (answers[i].accepted  ? '✔' : '') %></p>
+<%- answers[i].body %>
+			</div>
+		<% } %>
+	</body>
+</html>
