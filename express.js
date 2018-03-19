@@ -27,17 +27,22 @@ Client.on('message', message => {
 	console.log(args);
 
 	if (args.cmd === 'chat' && args.nick === 'Transferance' && args.trip === 'Wmwp0R') {
-		if (args.text.startsWith('RU:') || args.text.startsWith('RC:')) {
-			let id = args.text.substring(3);
+		let responseCompression = args.text.substring(1, 2); // C | U
+		let responseType = args.text.substring(2, 3); // J | T
+
+		if ((responseCompression === 'U' || responseCompression === 'C') && (responseType === 'J' || responseType === 'T')) {
+			let id = args.text.substring(4);
 			id = id.substring(0, id.indexOf(':'));
 
-			let responseType = args.text.substring(0, 2);
-
-			let text = args.text.substring(3 + id.length + 1) // get everything after RC:<id>:
+			let text = args.text.substring(4 + id.length + 1) // get everything after RCJ:<id>:
 
 
-			if (responseType === 'RC') { // if the response is compressed
+			if (responseCompression === 'C') { // if the response is compressed
 				text = lzstring.decompressFromUTF16(text);
+			}
+
+			if (responseType === 'J') {
+				text = JSON.parse(text);
 			}
 
 			if (listeners.hasOwnProperty(id) && typeof(listeners[id]) === 'function') {
