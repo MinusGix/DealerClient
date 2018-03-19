@@ -1,6 +1,7 @@
 (async () => {
 const WebSocket = require('ws');
 const fs = require('fs');
+const lzstring = require('lz-string');
 
 const express = require('express');
 const app = express();
@@ -26,12 +27,19 @@ Client.on('message', message => {
 	console.log(args);
 
 	if (args.cmd === 'chat' && args.nick === 'Transferance' && args.trip === 'Wmwp0R') {
-		if (args.text.startsWith('R:')) {
-			let id = args.text.substring(2);
+		if (args.text.startsWith('RU:') || args.text.startsWith('RC:')) {
+			let id = args.text.substring(3);
 			id = id.substring(0, id.indexOf(':'));
 
+			let text = args.text;
+
+			if (text.startsWith('RC:')) { // response-compressed
+				text = lzstring.decompressFromUTF16(text.substring(3 + id.length + 1));
+			}
+
 			if (listeners.hasOwnProperty(id) && typeof(listeners[id]) === 'function') {
-				listeners[id](args.text.substring(2 + id.length + 1), id, args);
+				
+				listeners[id](text, id, args);
 			}
 		}
 	}
