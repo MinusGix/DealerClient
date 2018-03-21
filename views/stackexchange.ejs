@@ -16,10 +16,32 @@
 		</style>
 	</head>
 	<body>
+		<% if (typeof(question) === 'object') { %>
+			<div id="question" class="box">
+				<p><span class="score"><%= question.score %></span> | <a href="<%= question.link %>" class="title"><%= question.title %></a></p>
+
+<%- question.body %>
+
+			<% if (question.comments.length > 0) { %>
+				<div class="comments box">
+					<% for (let c = 0; c < question.comments.length; c++) { %>
+						<p class="comment"><%= question.comments[c].score %> | <%- question.comments[c].body %></p>
+					<% } %>
+				</div>
+			<% } %>
+			</div>
+		<% } %>
 		<% for (let i = 0; i < answers.length; i++) { %>
-			<div class="answer">
-				<p><a href="<%= answers[i].poster.profileURL %>"><%= answers[i].poster.name %></a> | <%= answers[i].score %> | <%= (answers[i].accepted  ? '✔' : '') %></p>
+			<div class="answer box">
+				<p><span class="score"><%= answers[i].score %></span> | <span class="accepted-status"><%= (answers[i].accepted  ? '✔' : '') %></span></p>
 <%- answers[i].body %>
+				<% if (answers[i].comments.length > 0) { %>
+					<div class="comments box">
+						<% for (let j = 0; j < answers[i].comments.length; j++) { %>
+							<p class="comment"><%- answers[i].comments[j] %></p>
+						<% } %>
+					</div>
+				<% } %>
 			</div>
 		<% } %>
 
