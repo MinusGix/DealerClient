@@ -40,7 +40,7 @@
 				<% if (answers[i].comments.length > 0) { %>
 					<div class="comments box">
 						<% for (let j = 0; j < answers[i].comments.length; j++) { %>
-							<p class="comment"><%- answers[i].comments[j] %></p>
+							<p class="comment"><%= answers[i].comments[j].score %> | <%- answers[i].comments[j].body %></p>
 						<% } %>
 					</div>
 				<% } %>

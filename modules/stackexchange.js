@@ -12,11 +12,10 @@ module.exports = {
 				};
 				let answers = data.answers.map(answer => {
 					return {
-						score: data.score || 0,
+						score: answer.score || 0,
 						body: answer.body || '',
-						comments: (answer.comments || [])
-							.map(comment => comment.body),
-						accepted: data.is_accepted || false
+						comments: (answer.comments || []),
+						accepted: answer.is_accepted || false
 					};
 				});
 
@@ -33,17 +32,13 @@ module.exports = {
 				let answers = data.map(answer => {
 					let body = answer.body;
 					let accepted = answer.is_accepted;
-					let poster = {
-						name: answer.owner.display_name,
-						profileURL: answer.owner.link
-					};
 
 					return {
-						body,
-						accepted,
-						poster,
-						score: answer.score
-					};
+						score: answer.score || 0,
+						body: answer.body || '',
+						comments: (answer.comments || []),
+						accepted: answer.is_accepted || false
+					}
 				})
 				res.render("stackexchange.ejs",{
 					answers
