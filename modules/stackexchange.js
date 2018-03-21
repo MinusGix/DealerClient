@@ -1,7 +1,6 @@
 module.exports = {
 	init: (Data) => {
 		Data.app.get('/stackexchange/question/:answerID', (req, res) => {
-			console.log('boo');
 			Data.request('getstackexchangequestion&answers ' + req.params.answerID, data => {
 				let question = {
 					comments: data.comments || [],
@@ -23,7 +22,6 @@ module.exports = {
 					answers,
 					question
 				});
-				console.log('hi', question, answers);
 			});
 		});
 		
