@@ -1,0 +1,23 @@
+body {
+	background-color: #070707;	
+	color: #D8D8D8;
+}
+.box {
+	border: 1px inset;
+	box-shadow: inset 2px 2px black;
+	padding: 6px;
+	margin-bottom: 4px;
+}
+.box > p:first-of-type {
+	font-weight: bold;
+	margin-left: 10px;
+}
+a {
+	color: #D1CA51;
+}
+a:visited {
+	color: #97D151;	
+}
+a.title {
+	text-decoration: none;
+}
