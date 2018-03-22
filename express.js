@@ -66,7 +66,15 @@ await Connector.init(WebSocket, {
 				listeners[id](text, id, data);
 			}
 		}
-	}
+	},
+	readJSON,
+	generateID,
+	request,
+	express,
+	app,
+	fs,
+	lzstring,
+	Config
 });
 
 function sendText (text) {
