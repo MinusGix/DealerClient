@@ -7,11 +7,10 @@ module.exports = {
 		pingInterval: null
 	},
 
-	_WebSocket: null,
+	_WebSocket: require('ws'),
 	_Util: null,
 
-	async init (WebSocket, Util) {
-		this._WebSocket = WebSocket;
+	async init (Util) {
 		this._Util = Util;
 
 		this.state.config = await Util.readJSON(__dirname + "/config.json");

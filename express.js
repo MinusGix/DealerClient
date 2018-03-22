@@ -1,5 +1,4 @@
 (async () => {
-const WebSocket = require('ws');
 const fs = require('fs');
 const lzstring = require('lz-string');
 
@@ -21,7 +20,7 @@ try {
 	throw err;
 }
 
-await Connector.init(WebSocket, {
+await Connector.init({
 	creceive () {
 		return this.receive.bind(this);
 	},
@@ -124,7 +123,6 @@ function readJSON (filename) {
 let Data = {
 	express,
 	app,
-	WebSocket,
 	Modules: {},
 	files: [],
 
