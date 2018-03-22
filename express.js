@@ -13,59 +13,70 @@ app.use('/static/js/', express.static('views/js'));
 
 let listeners = {}; // stores the callbacks for certain ids
 
-const Client = new WebSocket("wss://hack.chat/chat-ws");
+let connectorName = 'hackchat'; //todo: put this in a config
 
-Client.on('open', () => {
-	console.log("Socket open");
-	send({
-		cmd: 'join',
-		nick: 'DealerClient#communism',
-		channel: "botDev"
-	});
-});
+try {
+	Connector = require(__dirname + "/connectors/" + connectorName);
+} catch (err) {
+	throw err;
+}
 
-Client.on('message', message => {
-	let args = JSON.parse(message);
+await Connector.init(WebSocket, {
+	creceive () {
+		return this.receive.bind(this);
+	},
+	async receive (data) {
+		let i = 0;
+		
+		if (typeof(Connector.parseData) === 'function') { // run the function on the data, assume the data is fine by itself if the function doesn't exist
+			data = await Connector.parseData(data);
+		}
+		
+		if (typeof(Connector.dataShouldBeUsed) === 'function') { // run the function on the data, assume the data is fine if it doesn't exist
+			if (!(await Connector.dataShouldBeUsed(data))) {
+				return; // data is not to be used for anything, rip
+			}
+		}
 
-	console.log(args);
+		let text = data; // assume data is fine as text if the function doesn't exist
 
-	if (args.cmd === 'chat' && args.nick === 'Transferance' && args.trip === 'Wmwp0R') {
-		let responseCompression = args.text.substring(1, 2); // C | U
-		let responseType = args.text.substring(2, 3); // J | T
+		if (typeof(Connector.grabText) === 'function') {
+			text = await Connector.grabText(data);
+		}
 
+		let responseCompression = text.substring(1, 2); // C | U
+		let responseType = text.substring(2, 3); // J | T
+		
 		if ((responseCompression === 'U' || responseCompression === 'C') && (responseType === 'J' || responseType === 'T')) {
-			let id = args.text.substring(4);
+			let id = text.substring(4);
 			id = id.substring(0, id.indexOf(':'));
-
-			let text = args.text.substring(4 + id.length + 1) // get everything after RCJ:<id>:
-
-
+			
+			text = text.substring(4 + id.length + 1) // get everything after RCJ:<id>:
+	
+	
 			if (responseCompression === 'C') { // if the response is compressed
 				text = lzstring.decompressFromUTF16(text);
 			}
-
+	
 			if (responseType === 'J') {
 				text = JSON.parse(text);
 			}
-
+			
 			if (listeners.hasOwnProperty(id) && typeof(listeners[id]) === 'function') {
-				listeners[id](text, id, args);
+				listeners[id](text, id, data);
 			}
 		}
 	}
 });
 
-function send (data) {
-	if (Client.readyState === Client.OPEN) {
-		Client.send(JSON.stringify(data));
+function sendText (text) {
+	if (typeof(Connector.sendText) === 'function') {
+		Connector.sendText(text);
 	}
 }
 
-function sendText (text) {
-	send({
-		cmd: 'chat',
-		text
-	});
+function send (...data) {
+	sendText(...data);
 }
 
 function request (text, callback) {
@@ -90,7 +101,7 @@ let Data = {
 	Modules: {},
 	files: [],
 
-	send,
+	send: sendText,
 	request
 };
 
@@ -119,6 +130,7 @@ for (let i = 0; i < Data.files.length; i++) {
 	}
 }
 
+Connector.connect();
 
 app.listen(616, () => console.log('Express listening on port 616'));
 
