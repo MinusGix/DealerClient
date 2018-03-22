@@ -1,5 +1,6 @@
 {
 	"connector": [
-		"hackchat"
+		"hackchat",
+		"hackchat/unrealsecurity"
 	]
 }

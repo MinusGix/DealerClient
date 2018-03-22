@@ -14,13 +14,16 @@ app.use('/static/js/', express.static('views/js'));
 
 let listeners = {}; // stores the callbacks for certain ids
 
+let Connector;
+let ConnectorModifiers = [];
+
 try {
 	Connector = require(__dirname + "/connectors/" + Config.connector[0]);
 } catch (err) {
 	throw err;
 }
 
-await Connector.init({
+let Util = {
 	creceive () {
 		return this.receive.bind(this);
 	},
@@ -73,8 +76,19 @@ await Connector.init({
 	app,
 	fs,
 	lzstring,
-	Config
-});
+	Config,
+	Connector,
+	ConnectorModifiers,
+};
+await Connector.init(Util);
+
+for (let i = 1; i < Config.connector.length; i++) {
+	let connectorModifier = require(__dirname + '/connectors/' + Config.connector[i]);
+
+	await connectorModifier.init(Util);
+
+	ConnectorModifiers.push(connectorModifier);
+}
 
 function sendText (text) {
 	if (typeof(Connector.sendText) === 'function') {
