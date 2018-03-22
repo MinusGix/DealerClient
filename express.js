@@ -6,6 +6,8 @@ const lzstring = require('lz-string');
 const express = require('express');
 const app = express();
 
+let Config = await readJSON(__dirname + "/config.json");
+
 app.set('view engine', 'ejs');
 
 app.use('/static/css/', express.static('views/css'));
@@ -13,10 +15,8 @@ app.use('/static/js/', express.static('views/js'));
 
 let listeners = {}; // stores the callbacks for certain ids
 
-let connectorName = 'hackchat'; //todo: put this in a config
-
 try {
-	Connector = require(__dirname + "/connectors/" + connectorName);
+	Connector = require(__dirname + "/connectors/" + Config.connector[0]);
 } catch (err) {
 	throw err;
 }
@@ -91,6 +91,25 @@ function generateID () {
 	return Math.random().toString().substring(3, 9);
 }
 
+function readJSON (filename) {
+	return new Promise((resolve, reject) => {
+		fs.readFile(filename, 'utf8', (err, data) => {
+			if (err) {
+				return reject(err);
+			}
+			
+			let result;
+
+			try {
+				result = JSON.parse(data);
+			} catch (catchErr) {
+				reject(catchErr);
+			}
+
+			resolve(result);
+		});
+	});
+}
 
 
 
