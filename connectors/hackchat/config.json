@@ -1,0 +1,6 @@
+{
+	"websocketURL": "wss://hack.chat/chat-ws",
+	"username": "DealerClient",
+	"password": "communism",
+	"channel": "botDev"
+}

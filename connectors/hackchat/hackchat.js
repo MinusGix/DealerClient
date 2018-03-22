@@ -2,12 +2,7 @@ module.exports = {
 	name: 'hackchat',
 
 	state: {
-		config: {
-			websocketURL: "wss://hack.chat/chat-ws",
-			username: 'DealerClient',
-			password: 'communism',
-			channel: 'botDev'
-		},
+		config: {},
 		ws: null,
 		pingInterval: null
 	},
@@ -18,6 +13,8 @@ module.exports = {
 	async init (WebSocket, Util) {
 		this._WebSocket = WebSocket;
 		this._Util = Util;
+
+		this.state.config = await Util.readJSON(__dirname + "/config.json");
 	},
 
 	async connect () {
